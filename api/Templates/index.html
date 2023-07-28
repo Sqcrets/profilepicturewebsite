@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- Add Bootstrap JavaScript dependencies -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <!-- Add custom JavaScript code for image preview -->
+  <script>
+    function showImagePreview(src) {
+    const modalBody = $('#imagePreviewModal .modal-body');
+    modalBody.find('img').attr('src', src);
+  
+    if (mode === "light") {
+      modalBody.removeClass('dark-mode');
+    } else {
+      modalBody.addClass('dark-mode');
+    }
+  
+    $('#imagePreviewModal').modal('show');
+  }
+    let mode = "light";
+  
+    toggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    toggle.classList.toggle('dark');
+    imageWrappers.forEach(wrapper => {
+      wrapper.classList.toggle('dark-mode');
+    });
+  
+    if (mode === "light") {
+      mode = "dark";
+    } else {
+      mode = "light";
+    }
+  });
+  
+  </script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Simple Image Gallery</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+  <div class="dark-mode-toggle">
+    <i class="fas fa-moon"></i>
+  </div>
+  <!-- Add styles -->
+  <style>
+
+
+
+.dark-mode-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.dark-mode-toggle:hover {
+  transform: scale(1.1);
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f8f9fa;
+  padding: 2rem;
+}
+
+
+.image-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  max-width: 200%; /* increase the max-width value */
+  margin: 0 auto;
+}
+
+.image-wrapper {
+  flex-basis: calc(25% - 1rem); /* decrease the flex-basis value */
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.image-wrapper img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-wrapper img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transform: rotate(360deg); /* added */
+}
+
+.image-controls {
+  display: none;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 0.5rem;
+  text-align: center;
+}
+
+.image-wrapper:hover .image-controls {
+  display: block;
+}
+
+@keyframes bannerAnimation {
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: -50% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+.banner {
+  width: 98.3%;
+  height: 100px;
+  background-image: linear-gradient(45deg, #f06, transparent);
+  background-size: 200% 100%;
+  animation: bannerAnimation 4s linear infinite;
+  margin-bottom: 2rem;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-in-out;
+  animation-direction: alternate;
+  animation-play-state: running;
+}
+
+.dark-mode {
+  background-color: #222;
+  color: #fff;
+}
+
+.dark-mode .image-wrapper {
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+  border-color: #555;
+}
+
+.dark-mode .image-controls {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.dark-mode .modal-body {
+  background-color: #222;
+  color: #fff;
+}
+
+.dark-mode-toggle i {
+  animation: rotate 2s linear infinite;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.dark-mode-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.dark-mode-toggle.dark {
+  top: 40px;
+}
+
+.dark-mode-toggle i {
+  font-size: 2rem;
+}
+
+.image-container {
+  opacity: 1;
+  transform: translateY(50px);
+  transition: opacity 0.5s, transform 0.5s;
+}
+
+.image-container.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+
+  </style>
+</head>
+<body>
+  <div class="banner"></div>
+  <h1 class="text-center mb-5 animate__animated animate__bounce">Profile Pic Gallery</h1>
+  <form action="{{ url_for('upload_image') }}" method="post" enctype="multipart/form-data" class="text-center mb-5">
+    <input type="file" name="files" multiple class="d-inline-block mb-3">
+    <input type="submit" value="Upload" class="btn btn-primary">
+  </form>
+  <!-- Add the "Delete All" button form here -->
+  <form action="{{ url_for('delete_all') }}" method="post" class="text-center mb-5">
+    <button type="submit" class="btn btn-danger">Delete All Images</button>
+  <!-- Add the "Download All" button here -->
+  <a href="{{ url_for('download_all') }}" class="btn btn-primary">Download All</a>
+  </form>
+  </form>
+  <hr>
+
+
+  
+  <div class="image-container">
+    {% for image in images %}
+      <div class="image-wrapper">
+        <!-- Removed the unnecessary .image-container div -->
+        <img src="{{ url_for('uploaded_file', filename=image[1]) }}" alt="{{ image[1] }}" style="cursor: pointer;" onclick="showImagePreview(this.src)">
+        <p>{{ image[1] }}</p>
+        <div class="image-controls">
+          <a href="{{ url_for('download_file', filename=image[1]) }}" download class="btn btn-sm btn-success mb-2">Download</a>
+          <form action="{{ url_for('delete_image', filename=image[1]) }}" method="post">
+            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+          </form>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+<!-- Image preview modal -->
+<div class="modal fade" id="imagePreviewModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <img src="" alt="Image preview" style="width: 100%; max-height: 80vh; object-fit: contain;">
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  const toggle = document.querySelector('.dark-mode-toggle');
+  const body = document.querySelector('body');
+  const imageWrappers = document.querySelectorAll('.image-wrapper');
+
+  // Set the theme based on the cookie value
+  function setThemeFromCookie() {
+    const theme = getCookie('theme');
+    if (theme === 'dark') {
+      body.classList.add('dark-mode');
+      toggle.classList.add('dark');
+      imageWrappers.forEach(wrapper => {
+        wrapper.classList.add('dark-mode');
+      });
+    }
+  }
+
+  // Get the value of a cookie by name
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  }
+
+  toggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    toggle.classList.toggle('dark');
+    imageWrappers.forEach(wrapper => {
+      wrapper.classList.toggle('dark-mode');
+    });
+
+    // Set the cookie value based on the current theme
+    if (body.classList.contains('dark-mode')) {
+      document.cookie = 'theme=dark; path=/';
+    } else {
+      document.cookie = 'theme=light; path=/';
+    }
+  });
+
+  function isElementInViewport(el) {
+    const rect = el.getBoundingClientRect();
+    return (
+      rect.top >= 0 &&
+      rect.left >= 0 &&
+      rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+      rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
+  }
+
+  function updateImageVisibility() {
+    const imageContainers = document.querySelectorAll('.image-container');
+    for (const container of imageContainers) {
+      if (isElementInViewport(container)) {
+        container.classList.add('visible');
+      } else {
+        container.classList.remove('visible');
+      }
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', updateImageVisibility);
+  window.addEventListener('scroll', updateImageVisibility);
+  window.addEventListener('resize', updateImageVisibility);
+
+// Call the setThemeFromCookie() function on page load
+setThemeFromCookie();
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const deleteButtons = document.querySelectorAll(".delete-button");
+
+    deleteButtons.forEach((button) => {
+      button.addEventListener("click", (e) => {
+        e.preventDefault();
+        const filename = button.dataset.filename;
+        const csrfToken = document.querySelector("input[name=csrf_token]").value;
+
+        fetch(`/delete/${filename}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-CSRFToken": csrfToken,
+          },
+          body: `_csrf_token=${csrfToken}`,
+        }).then(() => {
+          window.location.reload();
+        });
+      });
+    });
+  });
+</script>
+</body>
+</html>
